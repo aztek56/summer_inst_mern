@@ -2,6 +2,8 @@
 const express = require('express');
 // a library to deal with mongoDB
 const mongoose = require('mongoose');
+// parse the url request
+const bodyParser = require('body-parser');
 
 // Add the files that contain the routes
 const users = require('./routes/api/users');
@@ -10,6 +12,10 @@ const posts = require('./routes/api/posts');
 
 // The actual creation of the server
 const app = express();
+
+// Body parser middleware
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 //DB config
 const db = require('./config/keys').mongoURI;
