@@ -1,5 +1,8 @@
 // import the express server.
 const express = require('express');
+// a library to deal with mongoDB
+const mongoose = require('mongoose');
+
 // Add the files that contain the routes
 const users = require('./routes/api/users');
 const profile = require('./routes/api/profile');
@@ -7,6 +10,15 @@ const posts = require('./routes/api/posts');
 
 // The actual creation of the server
 const app = express();
+
+//DB config
+const db = require('./config/keys').mongoURI;
+
+// Connect to MongoDB
+mongoose
+    .connect(db)
+    .then(()=> console.log('MongoDB Connected'))
+    .catch(err => console.log(err));
 
 // This configures the web server root path
 app.get('/', (req, res) => res.send('Hello!'));
