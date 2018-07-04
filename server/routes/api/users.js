@@ -10,6 +10,8 @@ const jwt = require('jsonwebtoken');
 // to create a protected route
 const passport = require('passport');
 
+const validateLoginInput = require('../../validation/login');
+
 // Load User model
 const User = require('../../models/User');
 // Load keys
@@ -58,6 +60,12 @@ router.post('/register', (req,res) => {
 // @desc    Login User / return JWT token
 // @access  Public
 router.post('/login', (req,res) => {
+    const { errors, isValid } = validateLoginInput(req.body);
+
+    // Check Validation
+    if (!isValid) {
+        return res.status(400).json(errors);
+    }
     const email = req.body.email;
     const password = req.body.password;
 
@@ -66,7 +74,8 @@ router.post('/login', (req,res) => {
         .then(user => {
             // Check for user
             if(!user) {
-                return res.status(404).json({errors:'User not found'});
+                errors.email = 'User not found';
+                return res.status(404).json(errors);
             }
             // Check password
             bcrypt.compare(password, user.password)
@@ -87,7 +96,8 @@ router.post('/login', (req,res) => {
                                 });
                             });
                     } else {
-                        return res.status(400).json({password:'Password invalid'});
+                        errors.password = 'Password invalid';
+                        return res.status(400).json(errors);
                     }
                 });
         });
