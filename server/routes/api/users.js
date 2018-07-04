@@ -11,6 +11,7 @@ const jwt = require('jsonwebtoken');
 const passport = require('passport');
 
 const validateLoginInput = require('../../validation/login');
+const validateRegisterInput = require('../../validation/register');
 
 // Load User model
 const User = require('../../models/User');
@@ -26,6 +27,12 @@ router.get('/test', (req, res) => res.json({msg: "User works!"}));
 // @desc    Register a user
 // @access  Public
 router.post('/register', (req,res) => {
+    // Validate the input data
+    const { errors, isValid } = validateRegisterInput(req.body);
+    // Check the validation
+    if(!isValid) {
+        return res.status(400).json(errors);
+    }
     User.findOne({ email: req.body.email })
         .then(user => {
             if(user) {
@@ -83,7 +90,11 @@ router.post('/login', (req,res) => {
                     if(isMatch) {
                         // User match
                         // Create payload for JWT
-                        const payload = { id: user.id, name: user.name, avatar: user.avatar };
+                        const payload = {
+                            id: user.id,
+                            name: user.name,
+                            avatar: user.avatar
+                        };
                         // sign token
                         jwt.sign(
                             payload,
