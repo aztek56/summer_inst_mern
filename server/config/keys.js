@@ -1,3 +1,4 @@
 module.exports = {
-    mongoURI:'replace-your-password'
+    mongoURI:'replace-your-mongoDB-url',
+    secretOrKey: 'secret'
 };
