@@ -7,6 +7,8 @@ const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 // Web token
 const jwt = require('jsonwebtoken');
+// to create a protected route
+const passport = require('passport');
 
 // Load User model
 const User = require('../../models/User');
@@ -77,7 +79,7 @@ router.post('/login', (req,res) => {
                         jwt.sign(
                             payload,
                             keys.secretOrKey,
-                            { expiresIn: 3600 },
+                            { expiresIn: 36000 },
                             (err, token) => {
                                 res.json({
                                     success: true,
@@ -89,6 +91,17 @@ router.post('/login', (req,res) => {
                     }
                 });
         });
+});
+
+// @route   GET api/users/current
+// @desc    Return current user
+// @access  Private
+router.get('/current', passport.authenticate('jwt', { session:false }), (req, res) => {
+    res.json({
+        id: req.user.id,
+        name: req.user.name,
+        email: req.user.email
+    });
 });
 
 module.exports = router;

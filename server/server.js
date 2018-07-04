@@ -4,6 +4,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 // parse the url request
 const bodyParser = require('body-parser');
+// include for jwt
+const passport = require('passport');
 
 // Add the files that contain the routes
 const users = require('./routes/api/users');
@@ -25,6 +27,11 @@ mongoose
     .connect(db)
     .then(()=> console.log('MongoDB Connected'))
     .catch(err => console.log(err));
+
+//Passport middleware
+app.use(passport.initialize());
+// Passport Config
+require('./config/passport')(passport);
 
 // This configures the web server root path
 app.get('/', (req, res) => res.send('Hello!'));
