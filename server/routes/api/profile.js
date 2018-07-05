@@ -133,10 +133,10 @@ router.post('/', passport.authenticate('jwt', {session: false}), (req, res) => {
                             .then(profile => res.json(profile));
                     })
             }
-        })
+        });
 });
 
-// @route   DELETE api/profile/:edu_id
+// @route   DELETE api/profile/
 // @desc    Delete user and profile
 // @access  Private
 router.delete('/', passport.authenticate('jwt', {session:false}), (req, res) => {
