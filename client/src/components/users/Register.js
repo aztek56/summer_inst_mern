@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import { registerUser } from "../../actions/authAction";
 
 class Register extends Component {
     constructor() {
@@ -16,6 +20,12 @@ class Register extends Component {
         this.onSubmit = this.onSubmit.bind(this);
     }
 
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.errors) {
+            this.setState({errors: nextProps.errors});
+        }
+    }
+
     onChange(event) {
         this.setState({ [event.target.name]: event.target.value });
     }
@@ -30,7 +40,7 @@ class Register extends Component {
             password2: this.state.password2
         };
 
-        console.log(newUser);
+        this.props.registerUser(newUser, this.props.history);
     }
 
     render() {
@@ -110,4 +120,15 @@ class Register extends Component {
     }
 }
 
-export default Register;
+Register.propTypes = {
+    registerUser: PropTypes.func.isRequired,
+    auth: PropTypes.object.isRequired,
+    errors: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+    auth: state.auth,
+    errors: state.errors
+});
+
+export default connect(mapStateToProps, { registerUser })(withRouter(Register));
