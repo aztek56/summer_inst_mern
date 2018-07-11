@@ -17,12 +17,20 @@ router.get('/test', (req, res) => res.json({msg: "Posts works!"}));
 // @desc    Get post
 // @access  Public
 router.get('/', (req,res) => {
+    const errors = {};
     Post.find()
         .sort({ date: -1 })
-        .then(posts => res.json(posts))
-        .catch(
-            res.status(404).json({ nopostfound: 'No posts found with that ID'})
-        );
+        .then(posts => {
+            if(!posts) {
+                errors.nopostfound = 'There are no posts';
+                return res.status(404).json(errors);
+            }
+            res.json(posts);
+        })
+        .catch(err => {
+            errors.nopostfound = 'There are no posts';
+            res.status(404).json(errors);
+        });
 });
 
 // @route   GET api/posts/:id
@@ -39,7 +47,7 @@ router.get('/:id', (req,res) => {
 // @route   POST api/posts
 // @desc    Create post
 // @access  Private
-router.get('/', passport.authenticate('jwt', { session: false}), (req, res) => {
+router.post('/', passport.authenticate('jwt', { session: false}), (req, res) => {
     const { errors, isValid } = validatePostInput(req.body);
 
     // Check Validation
